@@ -14,7 +14,7 @@
     <div>
       <div class="eyebrow">GRIDMASTERTH // XTI TOOLS</div>
       <h1>XTI <span>PORTFOLIO</span> CALCULATOR</h1>
-      <p>คำนวณล้างพอร์ต • Basket • Break-even • Grid • Survival</p>
+      <p>คำนวณล้างพอร์ต • Basket • Target Inventory • Survival • Stop Out</p>
     </div>
     <div class="status-pill"><span class="dot"></span> LOCAL CALCULATION</div>
   </header>
@@ -23,20 +23,20 @@
     <section class="hero panel">
       <div>
         <div class="kicker">เครื่องมือประกอบการวางแผน</div>
-        <h2>รู้ก่อนว่า “ต้องขึ้นถึงเท่าไร”<br><span>ถึงจะล้างพอร์ตได้</span></h2>
+        <h2>จำลองตามพฤติกรรม EA จริง<br><span>G40 = รวม 40 ไม้ ไม่ใช่ 1 ไม้ต่อขั้นตั้งแต่ G1</span></h2>
         <p class="muted">คำนวณใน Browser ของคุณโดยตรง ไม่มีการส่ง Balance, Position หรือข้อมูลพอร์ตไปยัง Server</p>
       </div>
       <div class="hero-cards">
-        <div class="mini"><b>โหมด 1</b><span>ล้างพอร์ตจริง</span></div>
-        <div class="mini"><b>โหมด 2</b><span>จำลอง Grid</span></div>
-        <div class="mini"><b>โหมด 3</b><span>วิเคราะห์ Survival</span></div>
+        <div class="mini"><b>โหมด 1</b><span>ล้างพอร์ต / Basket</span></div>
+        <div class="mini"><b>โหมด 2</b><span>พอร์ตจริงหลายไม้</span></div>
+        <div class="mini"><b>โหมด 3</b><span>Target Inventory Survival</span></div>
       </div>
     </section>
 
     <nav class="tabs" aria-label="Calculator sections">
       <button class="tab active" data-tab="basket">ล้างพอร์ต / Basket</button>
       <button class="tab" data-tab="positions">พอร์ตจริงแบบหลายไม้</button>
-      <button class="tab" data-tab="grid">จำลอง Grid / ทุน</button>
+      <button class="tab" data-tab="grid">จำลอง EA / Survival</button>
       <button class="tab" data-tab="about">สูตรและคำเตือน</button>
     </nav>
 
@@ -51,7 +51,7 @@
             <label>ราคาเฉลี่ยไม้ที่ถือ<input id="avgEntry" type="number" step="0.01" value="60.00"></label>
             <label>จำนวนไม้ที่ถือ<input id="positionCount" type="number" step="1" min="0" value="56"></label>
             <label>Lot ต่อไม้<input id="lotEach" type="number" step="0.01" min="0" value="0.01"></label>
-            <label>มูลค่าเมื่อราคาเคลื่อน $1 / 1 lot<input id="contractValue" type="number" step="1" min="0.0001" value="100"><small>ค่าเริ่มต้น 100 ตามแบบจำลอง XTI ที่ใช้อยู่</small></label>
+            <label>มูลค่าเมื่อราคาเคลื่อน $1 / 1 lot<input id="contractValue" type="number" step="1" min="0.0001" value="1000"><small>จากประวัติ XTI ของเรา: 0.01 lot ขยับ $0.47 ≈ $4.70 จึงเทียบได้กับ Contract ≈ 1000</small></label>
             <label>กำไร/ขาดทุนที่ปิดไปแล้วใน Cycle<input id="realized" type="number" step="0.01" value="0"></label>
             <label>Swap + Commission + Fee ปัจจุบัน<input id="costs" type="number" step="0.01" value="0"><small>ติดลบให้ใส่เครื่องหมาย -</small></label>
             <label>วิธีตั้งเป้าล้างพอร์ต<select id="targetMode"><option value="be">เสมอตัว (Break-even)</option><option value="usd" selected>กำไรเป็น USD</option><option value="pct">กำไรเป็น % ของ Balance เริ่ม Cycle</option></select></label>
@@ -94,7 +94,7 @@
 60.00,0.01,-1.72</textarea>
           <div class="form-grid compact">
             <label>ราคาปัจจุบัน<input id="pCurrent" type="number" step="0.01" value="59.00"></label>
-            <label>มูลค่า $1 / 1 lot<input id="pContract" type="number" step="1" value="100"></label>
+            <label>Contract / มูลค่าเมื่อราคาขยับ $1 ที่ 1 lot<input id="pContract" type="number" step="1" value="1000"></label>
             <label>Realized Cycle<input id="pRealized" type="number" step="0.01" value="0"></label>
             <label>เป้ากำไร USD<input id="pTarget" type="number" step="0.01" value="1000"></label>
           </div>
@@ -116,56 +116,87 @@
     </section>
 
     <section id="grid" class="tabpage">
+      <div class="panel notice-panel">
+        <div class="notice info"><b>โมเดล v0.2:</b> ถ้าเริ่ม Cycle ที่ G40 และยังไม่มีไม้ EA จะเปิดให้ยอดรวมเป็น 40 ไม้ใกล้ราคา G40 จากนั้นลง G41 จึงเพิ่มอีก 1 ไม้ให้รวม 41 — ไม่ได้สมมติว่ามีไม้เก่าตั้งแต่ G1</div>
+      </div>
+
       <div class="grid2">
         <div class="panel form-panel">
-          <div class="section-title"><span>03</span><h3>จำลอง Grid และความอยู่รอด</h3></div>
+          <div class="section-title"><span>03</span><h3>จำลอง Target Inventory และ Survival</h3></div>
           <div class="form-grid">
             <label>ราคาเริ่ม Grid (Origin)<input id="gOrigin" type="number" step="0.01" value="85"></label>
             <label>ระยะห่าง Grid (ราคา)<input id="gStep" type="number" step="0.01" value="0.50"></label>
-            <label>Lot ต่อ Grid<input id="gLot" type="number" step="0.01" value="0.01"></label>
-            <label>ราคาต่ำสุดที่อยากจำลอง<input id="gFloor" type="number" step="0.01" value="45"></label>
-            <label>ทุน / Balance<input id="gBalance" type="number" step="0.01" value="6000"></label>
+            <label>Grid ที่เริ่ม Cycle<input id="gStartGrid" type="number" step="1" min="1" value="40"><small>เช่น G40 = เปิดชุดแรกให้ยอดรวมเป็น 40 ไม้</small></label>
+            <label>ราคาเริ่ม Cycle (คำนวณอัตโนมัติ)<input id="gStartPriceView" type="text" value="65.50" disabled></label>
+            <label>Lot ต่อไม้<input id="gLot" type="number" step="0.01" value="0.01"></label>
+            <label>ขอบล่างที่หยุดเปิด BUY ใหม่<input id="gBuyLowerLimit" type="number" step="0.01" value="45"></label>
+            <label>ทุน / Balance ตอนเริ่ม Cycle<input id="gBalance" type="number" step="0.01" value="6000"></label>
             <label>Leverage<input id="gLeverage" type="number" step="1" value="500"></label>
-            <label>Contract / มูลค่า $1 ต่อ 1 lot<input id="gContract" type="number" step="1" value="100"></label>
+            <label>Contract / มูลค่าเมื่อราคาขยับ $1 ที่ 1 lot<input id="gContract" type="number" step="1" value="1000"><small>ค่าเริ่มต้น 1000 อิงพฤติกรรมกำไรจริงของ XTI ที่เราเคยทดสอบ</small></label>
+            <label>Broker Stop Out (%)<input id="gStopOut" type="number" step="1" value="50"><small>ถ้าไม่รู้ ให้ดูหน้า Specification/Account ของโบรกเกอร์</small></label>
+            <label>อยากให้รอดถึงราคา<input id="gSurvivalPrice" type="number" step="0.01" value="35"></label>
             <label>Margin Level ขั้นต่ำที่อยากรักษา (%)<input id="gMinMargin" type="number" step="1" value="300"></label>
-            <label>Buffer เพิ่มจาก Floating Loss (%)<input id="gBuffer" type="number" step="1" value="20"></label>
+            <label>Swap/Fee ในอนาคตที่เผื่อไว้ (USD)<input id="gFutureCosts" type="number" step="0.01" value="0"><small>ถ้าคาดว่าจะเสีย $300 ให้ใส่ -300</small></label>
+            <label>Buffer เงินเติมเพิ่ม (%)<input id="gBuffer" type="number" step="1" value="20"></label>
           </div>
-          <div class="actions"><button id="calcGrid" class="btn primary">สร้างแผน Grid</button></div>
+          <div class="actions"><button id="calcGrid" class="btn primary">คำนวณ Survival ใหม่</button></div>
         </div>
+
         <div class="panel result-panel">
-          <div class="section-title"><span>SIM</span><h3>ภาพรวมเมื่อราคาลงถึงจุดจำลอง</h3></div>
+          <div class="section-title"><span>SIM</span><h3>คำตอบสำหรับจุดเริ่ม Cycle นี้</h3></div>
           <div id="gridSignal" class="signal neutral">กำลังคำนวณ...</div>
-          <div class="metric-grid">
-            <div class="metric"><span>จำนวน Grid / ไม้</span><b id="gLevels">-</b></div>
-            <div class="metric"><span>Lot รวม</span><b id="gLots">-</b></div>
-            <div class="metric"><span>Floating โดยประมาณ</span><b id="gFloating">-</b></div>
-            <div class="metric"><span>Equity โดยประมาณ</span><b id="gEquity">-</b></div>
-            <div class="metric"><span>Margin โดยประมาณ</span><b id="gMargin">-</b></div>
-            <div class="metric"><span>Margin Level</span><b id="gMarginLevel">-</b></div>
-            <div class="metric big"><span>ทุนขั้นต่ำแบบ Loss + Buffer</span><b id="gSuggested">-</b></div>
+          <div class="metric-grid survival-metrics">
+            <div class="metric"><span>ราคาเริ่ม Cycle</span><b id="gStartPrice">-</b></div>
+            <div class="metric"><span>Initial Batch</span><b id="gInitialCount">-</b></div>
+            <div class="metric"><span>ไม้สูงสุดที่ขอบ BUY</span><b id="gMaxCount">-</b></div>
+            <div class="metric"><span>Lot สูงสุด</span><b id="gLots">-</b></div>
+            <div class="metric"><span>ราคาเฉลี่ยเมื่อเติมถึงขอบ BUY</span><b id="gAvgAtLimit">-</b></div>
+            <div class="metric"><span>Floating ที่ขอบ BUY</span><b id="gFloatingAtLimit">-</b></div>
+            <div class="metric"><span>Equity ที่ขอบ BUY</span><b id="gEquityAtLimit">-</b></div>
+            <div class="metric"><span>Margin Level ที่ขอบ BUY</span><b id="gMarginAtLimit">-</b></div>
+            <div class="metric big danger-metric"><span>ราคา Stop Out โดยประมาณ</span><b id="gStopOutPrice">-</b></div>
+            <div class="metric big"><span>เงินที่ต้องเติมเพื่อรอดถึงราคาเป้าหมาย</span><b id="gTopUp">-</b></div>
+            <div class="metric"><span>ทุนรวมขั้นต่ำที่ควรมี</span><b id="gRequiredBalance">-</b></div>
+            <div class="metric"><span>เงินเติมแนะนำรวม Buffer</span><b id="gTopUpBuffered">-</b></div>
           </div>
+          <div class="explain" id="gridExplain"></div>
         </div>
       </div>
+
       <div class="panel table-panel">
-        <div class="section-title"><span>GRID TABLE</span><h3>ตารางแต่ละระดับ</h3></div>
-        <div class="table-scroll"><table><thead><tr><th>Grid</th><th>ราคาเข้า</th><th>Lot สะสม</th><th>P/L ของไม้ ณ Floor</th><th>Floating สะสม ณ Floor</th></tr></thead><tbody id="gridRows"></tbody></table></div>
+        <div class="section-title"><span>PATH</span><h3>เส้นทางจาก Grid เริ่มต้นลงถึงขอบ BUY</h3></div>
+        <div class="table-scroll"><table><thead><tr><th>จุด</th><th>ราคา</th><th>เพิ่มไม้</th><th>ไม้รวม</th><th>Lot รวม</th><th>ราคาเฉลี่ย</th><th>Floating</th><th>Equity</th><th>Margin Level</th></tr></thead><tbody id="gridRows"></tbody></table></div>
+      </div>
+
+      <div class="panel table-panel">
+        <div class="section-title"><span>ALL STARTS</span><h3>ตาราง Survival ทุกจุดเริ่มในกรอบ</h3></div>
+        <p class="muted">ตารางนี้ตอบคำถาม “ถ้า Cycle เริ่มตรง G ไหน จะเป็นอย่างไร” โดยใช้ทุน/โบรกเกอร์/ราคา Survival ชุดเดียวกับด้านบน</p>
+        <div class="table-scroll all-starts"><table><thead><tr><th>เริ่ม</th><th>ราคาเริ่ม</th><th>Initial</th><th>Avg @ ขอบ BUY</th><th>Float @ Survival</th><th>ML @ Survival</th><th>Stop Out ≈</th><th>เติมขั้นต่ำ</th></tr></thead><tbody id="allStartRows"></tbody></table></div>
       </div>
     </section>
 
     <section id="about" class="tabpage">
       <div class="panel prose">
         <div class="section-title"><span>INFO</span><h3>สิ่งที่ Calculator คิด และสิ่งที่มันไม่รู้</h3></div>
-        <div class="notice danger"><b>สำคัญ:</b> นี่เป็นเครื่องคำนวณประมาณการ ไม่ใช่การรับประกันว่าพอร์ตจะรอดหรือ Broker จะปิดได้ที่ราคาที่คำนวณ</div>
-        <h4>สูตรล้างพอร์ต</h4>
-        <p><code>Open P/L = (ราคาอนาคต - ราคาเฉลี่ยเข้า) × มูลค่า $1/1 lot × Lot รวม</code></p>
-        <p><code>Cycle Net = Realized + Swap/Fee + Open P/L</code></p>
-        <p>จากนั้นแก้สมการย้อนกลับเพื่อหาราคาที่ทำให้ Cycle Net เท่ากับเป้าหมาย Basket</p>
+        <div class="notice danger"><b>สำคัญ:</b> นี่เป็นเครื่องคำนวณประมาณการ ไม่ใช่การรับประกันว่าพอร์ตจะรอดหรือ Broker จะ Stop Out ที่ราคาที่คำนวณ</div>
+        <h4>โมเดล Target Inventory ของ EA</h4>
+        <p><code>ราคา G = Origin - (G - 1) × Grid Step</code></p>
+        <p>ถ้าเริ่ม Cycle ที่ G40 และ Actual=0 → Initial Batch = 40 ไม้ที่บริเวณราคา G40 จากนั้น G41 เพิ่มอีก 1 ให้รวม 41, G42 เพิ่มอีก 1 ให้รวม 42 จนถึงขอบ BUY ที่ตั้งไว้</p>
+        <h4>สูตรกำไร/ขาดทุน</h4>
+        <p><code>Open P/L = Σ[(ราคาปัจจุบัน - ราคาเข้าแต่ละชุด) × Contract × Lot]</code></p>
+        <p><code>Equity ≈ Balance + Open P/L + Future Swap/Fee</code></p>
+        <p><code>Margin ≈ ราคา × Contract × Lot รวม ÷ Leverage</code></p>
+        <p><code>Margin Level ≈ Equity ÷ Margin × 100</code></p>
+        <h4>ราคา Stop Out</h4>
+        <p>เว็บไล่จำลองราคาลงจากจุดเริ่มจนถึง 0 และหาจุดแรกที่ Equity ≤ 0 หรือ Margin Level ≤ Stop Out % ที่กรอก หากไม่พบก่อนราคา 0 จะแสดงว่า “ไม่พบเหนือ 0” เพราะสูตร Margin ต่ำกว่าศูนย์ไม่ควรเชื่อถือสำหรับ CFD</p>
+        <h4>เงินที่ต้องเติม</h4>
+        <p>ที่ราคา Survival เป้าหมาย เว็บคำนวณ Equity ขั้นต่ำที่ต้องมีเพื่อรักษา Margin Level ตามเปอร์เซ็นต์ที่คุณตั้ง แล้วเทียบกับทุนปัจจุบันเพื่อบอกยอดเติมขั้นต่ำและยอดแนะนำพร้อม Buffer</p>
         <h4>ข้อจำกัด</h4>
         <ul>
-          <li>Swap ในอนาคตอาจเพิ่มขึ้น จึงทำให้ราคาล้างจริงเปลี่ยน</li>
-          <li>Slippage, Spread, Liquidity และ Broker reject ทำให้ราคาปิดจริงต่างจากค่าคำนวณ</li>
-          <li>Margin ของ CFD อาจถูก Broker คำนวณต่างจากสูตรมาตรฐาน จึงแสดงเป็น “ประมาณการ” เท่านั้น</li>
-          <li>ถ้าต้องการความแม่นยำสูงสุด ให้ใช้แท็บ “พอร์ตจริงแบบหลายไม้” และใส่ Entry/Lot/Swap ของแต่ละ Position</li>
+          <li>Margin ของ CFD แต่ละ Broker อาจใช้สูตรหรือ Margin Rate ต่างจาก <code>price × contract × lot ÷ leverage</code></li>
+          <li>Swap ในอนาคต, Commission, Spread, Slippage, Liquidity และ Stop Out rule ของ Broker ทำให้ผลจริงต่างจากแบบจำลอง</li>
+          <li>แบบจำลอง Survival สมมติว่า Grid ที่ราคาผ่านถูก Fill ตาม Target Inventory และหลังถึงขอบ BUY จะไม่เปิด BUY ใหม่เพิ่ม</li>
+          <li>สำหรับพอร์ตที่ถืออยู่จริง ให้ใช้แท็บ “พอร์ตจริงแบบหลายไม้” เพื่อหาราคาล้าง Basket จาก Entry/Lot จริง</li>
         </ul>
       </div>
     </section>
@@ -173,7 +204,7 @@
 
   <footer>
     <div>XTI ORIGINAL HYBRID // PORTFOLIO TOOL</div>
-    <div>v0.1 • Runs locally in your browser • No account connection</div>
+    <div>v0.2 • Target Inventory model • Runs locally in your browser</div>
   </footer>
   <script src="app.js"></script>
 </body>

@@ -1,36 +1,28 @@
-# XTI Portfolio Calculator
+# XTI-Portfolio-Calculator
 
-เครื่องคำนวณ Grid, Basket, Break-even, Survival และการล้างพอร์ตสำหรับ XTI Original Hybrid
+เครื่องคำนวณ Grid, Basket, Break-even, Target Inventory, Survival และ Stop Out สำหรับ XTI Original Hybrid
 
-## จุดประสงค์
-เว็บ Static ที่ทำงานใน Browser โดยตรง ไม่มี Backend และไม่เชื่อมบัญชี MT5
+## v0.2 — Target Inventory Survival model
 
-### ฟังก์ชัน v0.1
-- คำนวณราคา Break-even / ราคาเป้าล้าง Basket
-- ตั้งเป้า Basket เป็น USD หรือ % ของ Balance ตอนเริ่ม Cycle
-- ใส่ Position จริงหลายไม้แบบ `ราคาเข้า,lot,swap+fee`
-- จำลอง Fixed Grid เช่น Origin 85 / Step 0.50 / Lot 0.01
-- ประมาณ Floating, Equity, Margin, Margin Level และทุน Buffer
-- Responsive สำหรับมือถือและ Desktop
-- บันทึกค่าล่าสุดใน Local Storage ของ Browser
+เวอร์ชันนี้แก้แบบจำลอง Grid ให้ตรงกับพฤติกรรม EA มากขึ้น:
 
-## วิธีเปิด GitHub Pages
-1. Upload `index.html`, `style.css`, `app.js` และ `.nojekyll` ไว้ที่ root ของ branch `main`
-2. ไปที่ **Settings → Pages**
-3. ใน **Build and deployment** เลือก **Deploy from a branch**
-4. Branch: `main`
-5. Folder: `/(root)`
-6. Save
+- G40 = Target รวม 40 ไม้
+- ถ้าเริ่ม Cycle ที่ G40 และ Actual=0 → Initial Batch 40 ไม้ใกล้ราคา G40
+- ลง G41 → เพิ่ม 1 ไม้ให้รวม 41
+- ลง G42 → เพิ่ม 1 ไม้ให้รวม 42
+- เมื่อถึงขอบ BUY จะหยุดเพิ่ม Position ใหม่
+- คำนวณ Floating, Equity, Margin Level, Stop Out โดยประมาณ
+- คำนวณเงินที่ต้องเติมเพื่อให้รอดถึงราคา Survival ที่กำหนด
+- มีตารางเปรียบเทียบทุกจุดเริ่ม Cycle ภายในกรอบ Grid
 
-URL จะอยู่ในรูปแบบ:
-`https://gridmasterth.github.io/XTI-Portfolio-Calculator/`
+## วิธีใช้
 
-## สูตรหลัก
-`Open P/L = (FuturePrice - AverageEntry) × ContractValue × TotalLots`
+เปิด `index.html` หรือใช้งานผ่าน GitHub Pages ได้โดยตรง ทุกการคำนวณทำใน Browser และไม่มีการส่งข้อมูลพอร์ตไปยัง Server
 
-`Cycle Net = Realized + Swap/Fee + Open P/L`
+## หมายเหตุสำคัญ
 
-ระบบแก้สมการย้อนกลับเพื่อหาราคาที่ทำให้ Cycle Net เท่ากับ Basket Target
+Stop Out และ Margin เป็นการประมาณด้วยสูตรมาตรฐาน `price × contract × lot ÷ leverage` เท่านั้น Broker แต่ละรายอาจใช้สูตร Margin, Margin Rate, Stop Out, Swap, Commission และเงื่อนไข CFD ต่างกัน จึงควรใช้เพื่อวางแผน/เปรียบเทียบและยืนยันกับ Specification ของ Broker ก่อนใช้เงินจริง
 
-## คำเตือน
-ค่าที่คำนวณเป็นประมาณการเท่านั้น Swap ในอนาคต, Spread, Slippage, Liquidity, Broker reject และกฎ Margin ของแต่ละ Broker อาจทำให้ผลจริงต่างออกไป
+## ค่า Contract เริ่มต้น
+
+ตั้งค่าเริ่มต้นเป็น `1000` เพราะจากประวัติ XTI ที่ทดสอบจริง 0.01 lot ซื้อ 56.95 และขาย 57.42 (ส่วนต่าง $0.47) ให้กำไร $4.70 ซึ่งสอดคล้องกับ Contract Size ประมาณ 1000 หน่วยต่อ 1.00 lot.
