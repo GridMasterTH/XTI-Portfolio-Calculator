@@ -1,28 +1,44 @@
-# XTI-Portfolio-Calculator
+# XTI Portfolio Calculator v0.3
 
-เครื่องคำนวณ Grid, Basket, Break-even, Target Inventory, Survival และ Stop Out สำหรับ XTI Original Hybrid
+เครื่องคำนวณสำหรับ XTI Original Hybrid / Target Inventory Ladder ที่ปรับให้รองรับสเปก Broker จริง โดยเฉพาะ Axi USOIL
 
-## v0.2 — Target Inventory Survival model
+## สิ่งใหม่ใน v0.3
 
-เวอร์ชันนี้แก้แบบจำลอง Grid ให้ตรงกับพฤติกรรม EA มากขึ้น:
+- Preset **Axi USOIL**: Contract 10, Minimum Volume 0.1, Volume Step 0.1
+- แสดง **Lot ที่ขอ** เทียบกับ **Lot ที่ Broker ใช้จริงหลัง Normalize**
+- คำนวณ Exposure จาก `Contract × Actual Lot`
+- รองรับบัญชี **USD / USC (Cent)** โดยคำนวณความเสี่ยงภายในเป็นเงินจริง USD
+- แสดงค่า Basket ที่ต้องใส่ใน EA เมื่อบัญชีเป็น USC
+- เคารพ `Max Positions` และ `Max Total Lots`
+- แยก **Raw Target** ออกจาก **Actual ที่เปิดได้จริง**
+- แจ้งเตือนเมื่อ Lot Cap ทำให้ Target Ladder ไม่สามารถเติมครบถึง Lower Limit
+- คำนวณ Max Total Lots ที่ต้องมี หากต้องการ Stress Test Target Ladder เต็มกรอบ
+- รองรับ Margin multiplier จากหน้า Specification; Axi USOIL preset ใช้ `0.01`
+- Survival / Stop Out / เงินเติม / Buffer
+- ตารางทุกจุดเริ่ม Cycle
+- Basket Calculator และ Position Calculator
+- เก็บค่าใน Local Storage เท่านั้น ไม่มี Server
 
-- G40 = Target รวม 40 ไม้
-- ถ้าเริ่ม Cycle ที่ G40 และ Actual=0 → Initial Batch 40 ไม้ใกล้ราคา G40
-- ลง G41 → เพิ่ม 1 ไม้ให้รวม 41
-- ลง G42 → เพิ่ม 1 ไม้ให้รวม 42
-- เมื่อถึงขอบ BUY จะหยุดเพิ่ม Position ใหม่
-- คำนวณ Floating, Equity, Margin Level, Stop Out โดยประมาณ
-- คำนวณเงินที่ต้องเติมเพื่อให้รอดถึงราคา Survival ที่กำหนด
-- มีตารางเปรียบเทียบทุกจุดเริ่ม Cycle ภายในกรอบ Grid
+## Axi Precision Benchmark ที่ใช้ตรวจพฤติกรรม EA
 
-## วิธีใช้
+- Symbol: USOIL
+- H1
+- Period: 2026-05-05 ถึง 2026-09-15
+- History Quality: **100% real ticks**
+- Ticks: **18,020,139**
+- Trades: 83
+- Win rate: 92.77%
+- Max Equity DD: 2.03%
+- Net Profit: $174.06
 
-เปิด `index.html` หรือใช้งานผ่าน GitHub Pages ได้โดยตรง ทุกการคำนวณทำใน Browser และไม่มีการส่งข้อมูลพอร์ตไปยัง Server
+ผล Benchmark ใช้ยืนยันพฤติกรรม EA บน Real Tick จริง แต่ช่วงดังกล่าวไม่ได้ลากถึง Lower Limit 45 จึงไม่ใช่หลักฐานว่า MM เต็มกรอบ 85–45 รอดแน่นอน
 
-## หมายเหตุสำคัญ
+## วิธีอัปเดต GitHub Pages
 
-Stop Out และ Margin เป็นการประมาณด้วยสูตรมาตรฐาน `price × contract × lot ÷ leverage` เท่านั้น Broker แต่ละรายอาจใช้สูตร Margin, Margin Rate, Stop Out, Swap, Commission และเงื่อนไข CFD ต่างกัน จึงควรใช้เพื่อวางแผน/เปรียบเทียบและยืนยันกับ Specification ของ Broker ก่อนใช้เงินจริง
+วิธีง่ายสุด: อัปโหลด `index.html` ทับไฟล์เดิมใน root ของ Repo แล้ว Commit จากนั้นรอ GitHub Pages deploy ใหม่
 
-## ค่า Contract เริ่มต้น
+ไฟล์นี้เป็น single-file: CSS และ JavaScript อยู่ใน `index.html` ทั้งหมด เพื่อลดปัญหา cache คนละเวอร์ชัน
 
-ตั้งค่าเริ่มต้นเป็น `1000` เพราะจากประวัติ XTI ที่ทดสอบจริง 0.01 lot ซื้อ 56.95 และขาย 57.42 (ส่วนต่าง $0.47) ให้กำไร $4.70 ซึ่งสอดคล้องกับ Contract Size ประมาณ 1000 หน่วยต่อ 1.00 lot.
+## ข้อจำกัด
+
+เป็นเครื่องคำนวณประมาณการ ไม่ใช่การรับประกันผลลัพธ์จริง. Swap, commission, slippage, gap, liquidity, Stop Out rule และ margin rule ของ Broker อาจทำให้ผลจริงแตกต่างจากแบบจำลอง

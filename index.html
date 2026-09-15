@@ -1,211 +1,181 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#07110b" />
-  <title>XTI Portfolio Calculator</title>
-  <meta name="description" content="เครื่องคำนวณ Grid, Basket, Break-even, Survival และการล้างพอร์ตสำหรับ XTI Original Hybrid" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#061009">
+<title>XTI Portfolio Calculator v0.3</title>
+<meta name="description" content="เครื่องคำนวณ Target Inventory, Basket, Broker Contract, USD/USC, Survival และเงินทุนสำหรับ XTI Original Hybrid">
+<style>
+:root{--bg:#030705;--panel:#07110b;--panel2:#0a1710;--line:#174127;--green:#31ff74;--green2:#10c955;--amber:#ffd05d;--red:#ff6666;--text:#eaffef;--muted:#89a895;--blue:#66b9ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);background:radial-gradient(circle at 16% -5%,#0b2614 0,transparent 30%),linear-gradient(180deg,#020503,#050b07);font-family:Inter,"Noto Sans Thai",Tahoma,Arial,sans-serif;min-height:100vh}.scan{position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.08;background:repeating-linear-gradient(to bottom,transparent 0 3px,rgba(49,255,116,.08) 4px)}
+.wrap{max-width:1480px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:20px 0;border-bottom:1px solid #14321f}.eyebrow{font:12px monospace;letter-spacing:2px;color:var(--muted)}h1{margin:4px 0 0;font-size:clamp(30px,5vw,58px);line-height:1;font-weight:950;letter-spacing:-2px}h1 span{color:var(--green);text-shadow:0 0 20px rgba(49,255,116,.28)}.subtitle{margin:10px 0 0;color:var(--muted)}.badge{border:1px solid #27643a;border-radius:999px;padding:10px 14px;color:var(--green);font:12px monospace;white-space:nowrap}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);margin-right:7px}
+.panel{background:linear-gradient(180deg,rgba(8,23,13,.97),rgba(4,12,7,.97));border:1px solid var(--line);border-radius:15px;box-shadow:0 0 26px rgba(49,255,116,.05)}.hero{margin-top:22px;padding:25px;display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:center}.kicker{font:800 12px monospace;letter-spacing:2px;color:var(--amber)}.hero h2{font-size:clamp(26px,3.5vw,48px);line-height:1.12;margin:8px 0}.hero h2 span{color:var(--green)}.hero p{color:var(--muted);line-height:1.7}.heroStats{display:grid;grid-template-columns:1fr 1fr;gap:9px}.mini{padding:14px;border:1px solid #205a33;border-radius:10px;background:#07130b}.mini small{display:block;color:#79a388}.mini b{display:block;margin-top:5px;font-size:18px}.mini b.good{color:var(--green)}
+.tabs{display:flex;gap:8px;margin:18px 0;overflow:auto}.tab{background:#07130b;color:#b7d1bf;border:1px solid #1e4c2d;border-radius:10px;padding:12px 16px;font-weight:900;cursor:pointer;white-space:nowrap}.tab:hover,.tab.active{background:var(--green);color:#031006;border-color:var(--green)}.page{display:none}.page.active{display:block}.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:17px}.box{padding:21px}.title{display:flex;align-items:center;gap:10px;margin-bottom:17px;padding-bottom:11px;border-bottom:1px solid #153821}.title .tag{color:var(--green);font:800 11px monospace;border:1px solid #2b6740;border-radius:6px;padding:5px 7px}.title h3{margin:0;font-size:20px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:flex;flex-direction:column;gap:6px;color:#c0d7c7;font-size:13px;font-weight:800}label small{font-weight:400;color:#71917c;line-height:1.45}input,select,textarea{width:100%;background:#020704;color:var(--text);border:1px solid #234f32;border-radius:9px;padding:11px 12px;outline:none;font:600 14px inherit}input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(49,255,116,.08)}input:disabled{color:var(--amber);background:#090b05;border-color:#454624;opacity:.9}.span2{grid-column:span 2}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}.btn{border-radius:9px;padding:11px 16px;font-weight:950;cursor:pointer;border:1px solid #28553a}.btn.primary{background:var(--green);color:#031006;border-color:var(--green)}.btn.ghost{background:#0b1a10;color:#cae2d0}.btn.warn{background:#2a2108;color:#ffe89b;border-color:#5b4b1c}.notice{border-radius:10px;padding:13px 15px;line-height:1.65;margin-bottom:14px}.info{background:rgba(102,185,255,.08);border:1px solid rgba(102,185,255,.32);color:#cfe9ff}.warnbox{background:rgba(255,208,93,.09);border:1px solid rgba(255,208,93,.35);color:#ffe8a7}.danger{background:rgba(255,102,102,.08);border:1px solid rgba(255,102,102,.38);color:#ffc0c0}.okbox{background:rgba(49,255,116,.08);border:1px solid rgba(49,255,116,.32);color:#caffd8}.signal{padding:13px 14px;border-radius:9px;font-weight:950;margin-bottom:13px}.signal.good{background:rgba(49,255,116,.1);border:1px solid rgba(49,255,116,.35);color:var(--green)}.signal.warn{background:rgba(255,208,93,.1);border:1px solid rgba(255,208,93,.34);color:var(--amber)}.signal.bad{background:rgba(255,102,102,.1);border:1px solid rgba(255,102,102,.34);color:#ff8b8b}.signal.neutral{background:#0b1810;color:#9dc2a8}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{padding:14px;border:1px solid #174128;border-radius:10px;background:#061009}.metric small{display:block;color:#79a58a}.metric b{display:block;margin-top:7px;font-size:20px}.metric.big{grid-column:span 2;border-color:#287a44}.metric.big b{font-size:31px;color:var(--green)}.metric.amber b{color:var(--amber)}.metric.red b{color:var(--red)}.explain{margin-top:15px;padding:13px 15px;border-left:3px solid var(--green);background:#07130b;color:#c0d5c6;line-height:1.72}.tablePanel{padding:20px;margin-top:17px}.scroll{overflow:auto;max-height:620px;border:1px solid #163c25;border-radius:10px}table{width:100%;border-collapse:collapse;font-size:13px}th{position:sticky;top:0;z-index:2;background:#0b1d12;color:var(--green);text-align:right;padding:10px;border-bottom:1px solid #285438;white-space:nowrap}th:first-child,td:first-child{text-align:left}td{padding:9px 10px;text-align:right;border-bottom:1px solid #0f2b1a;color:#d5e6da;white-space:nowrap}.rowhi td{background:rgba(49,255,116,.08)}.rowwarn td{background:rgba(255,208,93,.06)}.badtext{color:#ff8383!important}.goodtext{color:var(--green)!important}.ambertext{color:var(--amber)!important}.muted{color:var(--muted)}.about{line-height:1.82}.about h4{color:var(--green);margin:22px 0 8px}.about code{background:#020604;color:#b8ffca;border-radius:5px;padding:2px 5px}.benchmark{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.bench{padding:14px;border:1px solid #19452a;border-radius:10px;background:#07120b}.bench small{display:block;color:#7ba68b}.bench b{display:block;margin-top:5px;font-size:19px}.foot{margin:28px 0 10px;padding-top:18px;border-top:1px solid #13331f;display:flex;justify-content:space-between;color:#62816d;font:11px monospace;letter-spacing:1px}
+@media(max-width:950px){.hero,.grid2{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.span2{grid-column:span 1}.benchmark{grid-template-columns:1fr 1fr}.metric.big{grid-column:span 1}.badge{display:none}}@media(max-width:560px){.wrap{padding:12px}.box,.tablePanel,.hero{padding:15px}.heroStats,.benchmark,.metrics{grid-template-columns:1fr}.metric.big{grid-column:span 1}.foot{flex-direction:column;gap:7px}h1{letter-spacing:-1px}}
+</style>
 </head>
 <body>
-  <div class="scanlines"></div>
-  <header class="topbar">
-    <div>
-      <div class="eyebrow">GRIDMASTERTH // XTI TOOLS</div>
-      <h1>XTI <span>PORTFOLIO</span> CALCULATOR</h1>
-      <p>คำนวณล้างพอร์ต • Basket • Target Inventory • Survival • Stop Out</p>
-    </div>
-    <div class="status-pill"><span class="dot"></span> LOCAL CALCULATION</div>
-  </header>
+<div class="scan"></div>
+<div class="wrap">
+<header class="top"><div><div class="eyebrow">GRIDMASTERTH // XTI ORIGINAL HYBRID</div><h1>XTI <span>PORTFOLIO</span> CALCULATOR</h1><p class="subtitle">Broker-aware • Target Inventory • USD/USC • Basket • Survival • Stop Out</p></div><div class="badge"><span class="dot"></span>v0.3 LOCAL ONLY</div></header>
 
-  <main class="shell">
-    <section class="hero panel">
-      <div>
-        <div class="kicker">เครื่องมือประกอบการวางแผน</div>
-        <h2>จำลองตามพฤติกรรม EA จริง<br><span>G40 = รวม 40 ไม้ ไม่ใช่ 1 ไม้ต่อขั้นตั้งแต่ G1</span></h2>
-        <p class="muted">คำนวณใน Browser ของคุณโดยตรง ไม่มีการส่ง Balance, Position หรือข้อมูลพอร์ตไปยัง Server</p>
-      </div>
-      <div class="hero-cards">
-        <div class="mini"><b>โหมด 1</b><span>ล้างพอร์ต / Basket</span></div>
-        <div class="mini"><b>โหมด 2</b><span>พอร์ตจริงหลายไม้</span></div>
-        <div class="mini"><b>โหมด 3</b><span>Target Inventory Survival</span></div>
-      </div>
-    </section>
+<section class="panel hero">
+<div><div class="kicker">อัปเดตจาก Axi Precision Test</div><h2>คิดจาก <span>Contract × Lot จริง</span><br>ไม่ยึดเลข Lot อย่างเดียว</h2><p>รุ่นนี้รองรับ Axi USOIL โดยตรง: Contract 10, Min/Step 0.1, ตรวจ Max Total Lots, แปลง USD/USC และแยก “Target ที่ EA ต้องการ” ออกจาก “จำนวนไม้ที่ข้อจำกัดโบรก/EA เปิดได้จริง”</p></div>
+<div class="heroStats"><div class="mini"><small>History Quality</small><b class="good">100% real ticks</b></div><div class="mini"><small>Precision ticks</small><b>18,020,139</b></div><div class="mini"><small>Max Equity DD</small><b>2.03%</b></div><div class="mini"><small>Win rate</small><b>92.77%</b></div></div>
+</section>
 
-    <nav class="tabs" aria-label="Calculator sections">
-      <button class="tab active" data-tab="basket">ล้างพอร์ต / Basket</button>
-      <button class="tab" data-tab="positions">พอร์ตจริงแบบหลายไม้</button>
-      <button class="tab" data-tab="grid">จำลอง EA / Survival</button>
-      <button class="tab" data-tab="about">สูตรและคำเตือน</button>
-    </nav>
+<nav class="tabs">
+<button class="tab active" data-page="survival">EA / Survival</button>
+<button class="tab" data-page="basket">Basket / ล้างพอร์ต</button>
+<button class="tab" data-page="positions">พอร์ตจริงหลายไม้</button>
+<button class="tab" data-page="validation">ผลทดสอบอ้างอิง</button>
+<button class="tab" data-page="about">สูตร / คำเตือน</button>
+</nav>
 
-    <section id="basket" class="tabpage active">
-      <div class="grid2">
-        <div class="panel form-panel">
-          <div class="section-title"><span>01</span><h3>ข้อมูลพอร์ตแบบเร็ว</h3></div>
-          <div class="form-grid">
-            <label>Balance ปัจจุบัน (USD)<input id="balance" type="number" step="0.01" value="6000"></label>
-            <label>Balance ตอนเริ่ม Cycle (USD)<input id="cycleStart" type="number" step="0.01" value="6000"></label>
-            <label>ราคาปัจจุบัน<input id="currentPrice" type="number" step="0.01" value="57.50"></label>
-            <label>ราคาเฉลี่ยไม้ที่ถือ<input id="avgEntry" type="number" step="0.01" value="60.00"></label>
-            <label>จำนวนไม้ที่ถือ<input id="positionCount" type="number" step="1" min="0" value="56"></label>
-            <label>Lot ต่อไม้<input id="lotEach" type="number" step="0.01" min="0" value="0.01"></label>
-            <label>มูลค่าเมื่อราคาเคลื่อน $1 / 1 lot<input id="contractValue" type="number" step="1" min="0.0001" value="1000"><small>จากประวัติ XTI ของเรา: 0.01 lot ขยับ $0.47 ≈ $4.70 จึงเทียบได้กับ Contract ≈ 1000</small></label>
-            <label>กำไร/ขาดทุนที่ปิดไปแล้วใน Cycle<input id="realized" type="number" step="0.01" value="0"></label>
-            <label>Swap + Commission + Fee ปัจจุบัน<input id="costs" type="number" step="0.01" value="0"><small>ติดลบให้ใส่เครื่องหมาย -</small></label>
-            <label>วิธีตั้งเป้าล้างพอร์ต<select id="targetMode"><option value="be">เสมอตัว (Break-even)</option><option value="usd" selected>กำไรเป็น USD</option><option value="pct">กำไรเป็น % ของ Balance เริ่ม Cycle</option></select></label>
-            <label id="targetValueWrap">เป้ากำไร<input id="targetValue" type="number" step="0.01" value="1000"></label>
-          </div>
-          <div class="actions">
-            <button id="calcBasket" class="btn primary">คำนวณใหม่</button>
-            <button id="resetBasket" class="btn ghost">คืนค่าเริ่มต้น</button>
-          </div>
-        </div>
+<section id="survival" class="page active">
+<div class="panel box" style="margin-bottom:17px">
+<div class="title"><span class="tag">PRESET</span><h3>สเปก Broker / บัญชี</h3></div>
+<div class="formgrid">
+<label>Preset<select id="preset"><option value="axi">Axi USOIL — Contract 10 / Min 0.1</option><option value="generic100">Generic Oil — Contract 100 / Min 0.01</option><option value="legacy1000">Legacy XTI — Contract 1000 / Min 0.01</option><option value="custom">กำหนดเอง</option></select></label>
+<label>หน่วย Balance ของบัญชี<select id="accountUnit"><option value="USD">USD</option><option value="USC">USC (Cent)</option></select><small>USC: 100 USC = 1 USD จริง</small></label>
+<label>Contract Size<input id="contract" type="number" step="0.01" value="10"></label>
+<label>Lot ที่ต้องการต่อไม้<input id="lotRequested" type="number" step="0.01" value="0.01"></label>
+<label>Minimum Volume<input id="lotMin" type="number" step="0.01" value="0.1"></label>
+<label>Volume Step<input id="lotStep" type="number" step="0.01" value="0.1"></label>
+<label>Lot ที่ใช้จริงหลัง Normalize<input id="lotActualView" disabled value="0.10"></label>
+<label>Exposure ต่อไม้<input id="exposureView" disabled value="1.00"><small>Contract × Lot จริง; ราคาเคลื่อน $1 → P/L ≈ Exposure ดอลลาร์ต่อไม้</small></label>
+<label>Max Positions<input id="maxPositions" type="number" step="1" value="200"></label>
+<label>Max Total Lots<input id="maxTotalLots" type="number" step="0.1" value="2.0"></label>
+<label>Leverage<input id="leverage" type="number" step="1" value="500"></label>
+<label>Margin multiplier<input id="marginMultiplier" type="number" step="0.0001" value="0.01"><small>จาก Specification เช่น 0.0100000; ใส่ 0 เพื่อใช้ 1/Leverage</small></label>
+<label>Broker Stop Out (%)<input id="stopOutPct" type="number" step="1" value="50"></label>
+<label>Balance ตามหน้า Account<input id="balanceRaw" type="number" step="0.01" value="6000"><small>ถ้าเลือก USC: 6000 = $60 จริง</small></label>
+</div>
+<div class="actions"><button class="btn primary" id="applyPreset">ใช้ Preset</button><button class="btn ghost" id="resetAll">คืนค่าเริ่มต้น v0.3</button></div>
+</div>
 
-        <div class="panel result-panel">
-          <div class="section-title"><span>RESULT</span><h3>คำตอบแบบอ่านง่าย</h3></div>
-          <div id="basketState" class="signal neutral">กำลังคำนวณ...</div>
-          <div class="metric-grid">
-            <div class="metric"><span>Lot รวม</span><b id="rTotalLots">-</b></div>
-            <div class="metric"><span>Floating ตอนนี้</span><b id="rFloating">-</b></div>
-            <div class="metric"><span>Cycle Net ตอนนี้</span><b id="rCycleNet">-</b></div>
-            <div class="metric accent"><span>เป้ากำไร</span><b id="rTarget">-</b></div>
-            <div class="metric big"><span>ราคาประมาณที่ล้างได้</span><b id="rClosePrice">-</b></div>
-            <div class="metric"><span>ต้องขยับจากราคาปัจจุบัน</span><b id="rMove">-</b></div>
-          </div>
-          <div class="explain" id="basketExplain"></div>
-          <div class="scenario-wrap">
-            <h4>จำลองราคาใกล้เป้าหมาย</h4>
-            <table><thead><tr><th>ราคา</th><th>Open P/L</th><th>Cycle Net</th><th>สถานะ</th></tr></thead><tbody id="scenarioRows"></tbody></table>
-          </div>
-        </div>
-      </div>
-    </section>
+<div class="grid2">
+<div class="panel box">
+<div class="title"><span class="tag">MM</span><h3>Target Inventory / Survival</h3></div>
+<div class="formgrid">
+<label>Origin<input id="origin" type="number" step="0.01" value="85"></label>
+<label>Grid Step (ราคา)<input id="gridStep" type="number" step="0.01" value="1"></label>
+<label>Grid ที่เริ่ม Cycle<input id="startGrid" type="number" step="1" min="1" value="14"></label>
+<label>ราคาเริ่ม Cycle<input id="startPriceView" disabled></label>
+<label>ขอบ BUY (Lower Limit)<input id="lowerLimit" type="number" step="0.01" value="45"></label>
+<label>Hard Floor (อ้างอิง)<input id="hardFloor" type="number" step="0.01" value="30"></label>
+<label>อยากให้รอดถึงราคา<input id="survivalPrice" type="number" step="0.01" value="35"></label>
+<label>Margin Level ที่อยากรักษา (%)<input id="minMarginPct" type="number" step="1" value="150"></label>
+<label>Swap/Fee ที่เผื่อในอนาคต (เงินจริง USD)<input id="futureCostsUSD" type="number" step="0.01" value="0"><small>ถ้าคาดว่าจะเสีย $50 ให้ใส่ -50</small></label>
+<label>Buffer เงินเพิ่ม (%)<input id="bufferPct" type="number" step="1" value="25"></label>
+</div>
+<div class="actions"><button class="btn primary" id="calcSurvival">คำนวณใหม่</button></div>
+</div>
 
-    <section id="positions" class="tabpage">
-      <div class="grid2">
-        <div class="panel form-panel">
-          <div class="section-title"><span>02</span><h3>ใส่ไม้จริงเพื่อคำนวณแม่นขึ้น</h3></div>
-          <p class="muted">หนึ่งบรรทัดต่อหนึ่ง Position รูปแบบ: <code>ราคาเข้า,lot,swap+fee</code></p>
-          <textarea id="positionsText" rows="13" spellcheck="false">57.50,0.01,-0.86
-57.50,0.01,-0.86
-58.00,0.01,-0.86
-60.00,0.01,-1.72</textarea>
-          <div class="form-grid compact">
-            <label>ราคาปัจจุบัน<input id="pCurrent" type="number" step="0.01" value="59.00"></label>
-            <label>Contract / มูลค่าเมื่อราคาขยับ $1 ที่ 1 lot<input id="pContract" type="number" step="1" value="1000"></label>
-            <label>Realized Cycle<input id="pRealized" type="number" step="0.01" value="0"></label>
-            <label>เป้ากำไร USD<input id="pTarget" type="number" step="0.01" value="1000"></label>
-          </div>
-          <div class="actions"><button id="calcPositions" class="btn primary">วิเคราะห์พอร์ตจริง</button></div>
-        </div>
-        <div class="panel result-panel">
-          <div class="section-title"><span>ACTUAL</span><h3>สรุปไม้จริง</h3></div>
-          <div class="metric-grid">
-            <div class="metric"><span>จำนวนไม้</span><b id="pCount">-</b></div>
-            <div class="metric"><span>Lot รวม</span><b id="pLots">-</b></div>
-            <div class="metric"><span>ราคาเฉลี่ยถ่วง Lot</span><b id="pAvg">-</b></div>
-            <div class="metric"><span>Swap/Fee รวม</span><b id="pCosts">-</b></div>
-            <div class="metric"><span>Cycle Net ตอนนี้</span><b id="pNet">-</b></div>
-            <div class="metric big"><span>ราคาประมาณถึงเป้า</span><b id="pClose">-</b></div>
-          </div>
-          <div class="explain" id="pExplain"></div>
-        </div>
-      </div>
-    </section>
+<div class="panel box">
+<div class="title"><span class="tag">RESULT</span><h3>คำตอบของ MM ชุดนี้</h3></div>
+<div id="survivalSignal" class="signal neutral">กำลังคำนวณ...</div>
+<div id="capNotice" class="notice warnbox" style="display:none"></div>
+<div class="metrics">
+<div class="metric"><small>เงินจริงของ Balance</small><b id="balanceUSDView">-</b></div>
+<div class="metric"><small>Lot จริง / Exposure ต่อไม้</small><b id="actualLotExposure">-</b></div>
+<div class="metric"><small>Target ตอนเริ่ม / เปิดได้จริง</small><b id="initialTargetActual">-</b></div>
+<div class="metric"><small>Target ที่ขอบ BUY / เปิดได้สูงสุด</small><b id="lowerTargetActual">-</b></div>
+<div class="metric"><small>Grid สูงสุดตามกรอบ</small><b id="maxGridView">-</b></div>
+<div class="metric"><small>Max Position จาก Lot Cap</small><b id="lotCapView">-</b></div>
+<div class="metric"><small>ราคาเฉลี่ยที่ขอบ BUY</small><b id="avgLowerView">-</b></div>
+<div class="metric"><small>Floating ที่ขอบ BUY</small><b id="floatLowerView">-</b></div>
+<div class="metric"><small>Equity ที่ขอบ BUY</small><b id="equityLowerView">-</b></div>
+<div class="metric"><small>Margin Level ที่ขอบ BUY</small><b id="mlLowerView">-</b></div>
+<div class="metric big red"><small>Stop Out โดยประมาณ</small><b id="stopOutPriceView">-</b></div>
+<div class="metric big"><small>เงินที่ต้องเติมเพื่อรอดถึงราคาเป้าหมาย</small><b id="topUpView">-</b></div>
+<div class="metric amber"><small>ทุนรวมขั้นต่ำ</small><b id="requiredBalanceView">-</b></div>
+<div class="metric amber"><small>เงินเติมพร้อม Buffer</small><b id="topUpBufferView">-</b></div>
+</div>
+<div id="survivalExplain" class="explain"></div>
+</div>
+</div>
 
-    <section id="grid" class="tabpage">
-      <div class="panel notice-panel">
-        <div class="notice info"><b>โมเดล v0.2:</b> ถ้าเริ่ม Cycle ที่ G40 และยังไม่มีไม้ EA จะเปิดให้ยอดรวมเป็น 40 ไม้ใกล้ราคา G40 จากนั้นลง G41 จึงเพิ่มอีก 1 ไม้ให้รวม 41 — ไม่ได้สมมติว่ามีไม้เก่าตั้งแต่ G1</div>
-      </div>
+<div class="panel tablePanel"><div class="title"><span class="tag">PATH</span><h3>เส้นทางขาลงจากจุดเริ่มถึง Lower Limit</h3></div><div class="scroll"><table><thead><tr><th>Grid</th><th>ราคา</th><th>Target</th><th>เปิดเพิ่ม</th><th>Actual</th><th>Lot รวม</th><th>ราคาเฉลี่ย</th><th>Floating</th><th>Equity</th><th>ML</th></tr></thead><tbody id="pathRows"></tbody></table></div></div>
+<div class="panel tablePanel"><div class="title"><span class="tag">ALL STARTS</span><h3>ถ้า Cycle เริ่มที่ Grid ไหน เสี่ยงแค่ไหน</h3></div><p class="muted">ใช้ Down-only stress path: Initial Batch ที่ Grid เริ่มจริง แล้วเติมเฉพาะ Missing; เคารพ Max Positions และ Max Total Lots</p><div class="scroll"><table><thead><tr><th>เริ่ม</th><th>ราคาเริ่ม</th><th>Initial Target</th><th>Initial Actual</th><th>Actual @ Lower</th><th>Avg @ Lower</th><th>Float @ Survival</th><th>ML @ Survival</th><th>Stop Out ≈</th><th>เติมขั้นต่ำ</th></tr></thead><tbody id="allStartRows"></tbody></table></div></div>
+</section>
 
-      <div class="grid2">
-        <div class="panel form-panel">
-          <div class="section-title"><span>03</span><h3>จำลอง Target Inventory และ Survival</h3></div>
-          <div class="form-grid">
-            <label>ราคาเริ่ม Grid (Origin)<input id="gOrigin" type="number" step="0.01" value="85"></label>
-            <label>ระยะห่าง Grid (ราคา)<input id="gStep" type="number" step="0.01" value="0.50"></label>
-            <label>Grid ที่เริ่ม Cycle<input id="gStartGrid" type="number" step="1" min="1" value="40"><small>เช่น G40 = เปิดชุดแรกให้ยอดรวมเป็น 40 ไม้</small></label>
-            <label>ราคาเริ่ม Cycle (คำนวณอัตโนมัติ)<input id="gStartPriceView" type="text" value="65.50" disabled></label>
-            <label>Lot ต่อไม้<input id="gLot" type="number" step="0.01" value="0.01"></label>
-            <label>ขอบล่างที่หยุดเปิด BUY ใหม่<input id="gBuyLowerLimit" type="number" step="0.01" value="45"></label>
-            <label>ทุน / Balance ตอนเริ่ม Cycle<input id="gBalance" type="number" step="0.01" value="6000"></label>
-            <label>Leverage<input id="gLeverage" type="number" step="1" value="500"></label>
-            <label>Contract / มูลค่าเมื่อราคาขยับ $1 ที่ 1 lot<input id="gContract" type="number" step="1" value="1000"><small>ค่าเริ่มต้น 1000 อิงพฤติกรรมกำไรจริงของ XTI ที่เราเคยทดสอบ</small></label>
-            <label>Broker Stop Out (%)<input id="gStopOut" type="number" step="1" value="50"><small>ถ้าไม่รู้ ให้ดูหน้า Specification/Account ของโบรกเกอร์</small></label>
-            <label>อยากให้รอดถึงราคา<input id="gSurvivalPrice" type="number" step="0.01" value="35"></label>
-            <label>Margin Level ขั้นต่ำที่อยากรักษา (%)<input id="gMinMargin" type="number" step="1" value="300"></label>
-            <label>Swap/Fee ในอนาคตที่เผื่อไว้ (USD)<input id="gFutureCosts" type="number" step="0.01" value="0"><small>ถ้าคาดว่าจะเสีย $300 ให้ใส่ -300</small></label>
-            <label>Buffer เงินเติมเพิ่ม (%)<input id="gBuffer" type="number" step="1" value="20"></label>
-          </div>
-          <div class="actions"><button id="calcGrid" class="btn primary">คำนวณ Survival ใหม่</button></div>
-        </div>
+<section id="basket" class="page">
+<div class="grid2">
+<div class="panel box"><div class="title"><span class="tag">BASKET</span><h3>คำนวณราคาล้างพอร์ตแบบเร็ว</h3></div><div class="notice info">คำนวณเป็น “เงินจริง USD” เสมอ หากบัญชีเป็น USC เว็บจะแสดงค่า EA Input ที่เทียบเท่าให้ (เช่น $50 = 5,000 USC)</div><div class="formgrid">
+<label>ราคาปัจจุบัน<input id="bCurrent" type="number" step="0.01" value="75"></label>
+<label>ราคาเฉลี่ยไม้ทั้งหมด<input id="bAvg" type="number" step="0.01" value="72"></label>
+<label>จำนวนไม้<input id="bCount" type="number" step="1" value="15"></label>
+<label>Lot ต่อไม้จริง<input id="bLot" type="number" step="0.01" value="0.1"></label>
+<label>Contract<input id="bContract" type="number" step="0.01" value="10"></label>
+<label>Realized ใน Cycle (USD จริง)<input id="bRealized" type="number" step="0.01" value="0"></label>
+<label>Swap/Commission/Fee รวม (USD จริง)<input id="bCosts" type="number" step="0.01" value="0"></label>
+<label>เป้า Basket (USD จริง)<input id="bTargetUSD" type="number" step="0.01" value="50"></label>
+</div><div class="actions"><button class="btn primary" id="calcBasket">คำนวณ Basket</button></div></div>
+<div class="panel box"><div class="title"><span class="tag">RESULT</span><h3>ราคาเป้าหมาย</h3></div><div id="basketSignal" class="signal neutral">-</div><div class="metrics"><div class="metric"><small>Lot รวม</small><b id="bLotsView">-</b></div><div class="metric"><small>Floating ตอนนี้</small><b id="bFloatView">-</b></div><div class="metric"><small>Cycle Net ตอนนี้</small><b id="bNetView">-</b></div><div class="metric"><small>EA Basket Input</small><b id="bEAInputView">-</b></div><div class="metric big"><small>ราคาประมาณที่แตะเป้า</small><b id="bClosePriceView">-</b></div></div><div id="basketExplain" class="explain"></div></div>
+</div>
+</section>
 
-        <div class="panel result-panel">
-          <div class="section-title"><span>SIM</span><h3>คำตอบสำหรับจุดเริ่ม Cycle นี้</h3></div>
-          <div id="gridSignal" class="signal neutral">กำลังคำนวณ...</div>
-          <div class="metric-grid survival-metrics">
-            <div class="metric"><span>ราคาเริ่ม Cycle</span><b id="gStartPrice">-</b></div>
-            <div class="metric"><span>Initial Batch</span><b id="gInitialCount">-</b></div>
-            <div class="metric"><span>ไม้สูงสุดที่ขอบ BUY</span><b id="gMaxCount">-</b></div>
-            <div class="metric"><span>Lot สูงสุด</span><b id="gLots">-</b></div>
-            <div class="metric"><span>ราคาเฉลี่ยเมื่อเติมถึงขอบ BUY</span><b id="gAvgAtLimit">-</b></div>
-            <div class="metric"><span>Floating ที่ขอบ BUY</span><b id="gFloatingAtLimit">-</b></div>
-            <div class="metric"><span>Equity ที่ขอบ BUY</span><b id="gEquityAtLimit">-</b></div>
-            <div class="metric"><span>Margin Level ที่ขอบ BUY</span><b id="gMarginAtLimit">-</b></div>
-            <div class="metric big danger-metric"><span>ราคา Stop Out โดยประมาณ</span><b id="gStopOutPrice">-</b></div>
-            <div class="metric big"><span>เงินที่ต้องเติมเพื่อรอดถึงราคาเป้าหมาย</span><b id="gTopUp">-</b></div>
-            <div class="metric"><span>ทุนรวมขั้นต่ำที่ควรมี</span><b id="gRequiredBalance">-</b></div>
-            <div class="metric"><span>เงินเติมแนะนำรวม Buffer</span><b id="gTopUpBuffered">-</b></div>
-          </div>
-          <div class="explain" id="gridExplain"></div>
-        </div>
-      </div>
+<section id="positions" class="page">
+<div class="grid2"><div class="panel box"><div class="title"><span class="tag">POSITIONS</span><h3>พอร์ตจริงหลายไม้</h3></div><p class="muted">วางทีละบรรทัด: <code>ราคาเข้า,lot,ต้นทุน</code> เช่น <code>72.050,0.1,-0.03</code> ต้นทุนคือ Swap/Commission/Fee เป็นเงินจริง USD</p><textarea id="positionsText" rows="14">72.050,0.1,0
+72.040,0.1,0
+72.033,0.1,0</textarea><div class="formgrid" style="margin-top:12px"><label>ราคาปัจจุบัน<input id="pCurrent" type="number" step="0.001" value="73"></label><label>Contract<input id="pContract" type="number" step="0.01" value="10"></label><label>Realized Cycle (USD)<input id="pRealized" type="number" step="0.01" value="0"></label><label>Basket Target (USD)<input id="pTarget" type="number" step="0.01" value="50"></label></div><div class="actions"><button class="btn primary" id="calcPositions">คำนวณพอร์ตจริง</button></div></div>
+<div class="panel box"><div class="title"><span class="tag">RESULT</span><h3>สรุปจากไม้จริง</h3></div><div class="metrics"><div class="metric"><small>จำนวนไม้</small><b id="pCountView">-</b></div><div class="metric"><small>Lot รวม</small><b id="pLotsView">-</b></div><div class="metric"><small>ราคาเฉลี่ย</small><b id="pAvgView">-</b></div><div class="metric"><small>ต้นทุนรวม</small><b id="pCostsView">-</b></div><div class="metric"><small>Cycle Net ตอนนี้</small><b id="pNetView">-</b></div><div class="metric big"><small>ราคาประมาณถึง Basket</small><b id="pCloseView">-</b></div></div><div id="pExplain" class="explain"></div></div></div>
+</section>
 
-      <div class="panel table-panel">
-        <div class="section-title"><span>PATH</span><h3>เส้นทางจาก Grid เริ่มต้นลงถึงขอบ BUY</h3></div>
-        <div class="table-scroll"><table><thead><tr><th>จุด</th><th>ราคา</th><th>เพิ่มไม้</th><th>ไม้รวม</th><th>Lot รวม</th><th>ราคาเฉลี่ย</th><th>Floating</th><th>Equity</th><th>Margin Level</th></tr></thead><tbody id="gridRows"></tbody></table></div>
-      </div>
+<section id="validation" class="page">
+<div class="panel box about"><div class="title"><span class="tag">100% REAL TICKS</span><h3>Axi Precision Benchmark ที่ใช้เป็นฐาน v0.3</h3></div><div class="benchmark"><div class="bench"><small>ช่วงทดสอบ</small><b>2026-05-05 → 2026-09-15</b></div><div class="bench"><small>History Quality</small><b class="goodtext">100% real ticks</b></div><div class="bench"><small>Ticks</small><b>18,020,139</b></div><div class="bench"><small>Trades</small><b>83</b></div><div class="bench"><small>Win rate</small><b>92.77%</b></div><div class="bench"><small>Max Equity DD</small><b>2.03%</b></div><div class="bench"><small>Net Profit</small><b>$174.06</b></div><div class="bench"><small>Max Holding</small><b>484:42:47</b></div></div><div class="notice warnbox" style="margin-top:15px"><b>ตีความให้ถูก:</b> Benchmark นี้ใช้ยืนยันพฤติกรรม EA บน Real Tick จริง แต่ช่วงราคาในชุดนี้ไม่ลากลึกถึง Lower Limit 45 จึงยังไม่ใช่หลักฐานว่า MM เต็มกรอบ 85→45 รอดแน่นอน</div><div class="notice info"><b>ข้อค้นพบสำคัญ:</b> รอบทดสอบล่าสุดตั้ง Lot input 0.01 แต่ Axi ขั้นต่ำ 0.1 จึงใช้จริง 0.1; Max Total Lots 2.0 ทำให้ระบบถือได้สูงสุดประมาณ 20 ไม้ แม้ Target Ladder อาจต้องการมากกว่านั้น</div></div>
+</section>
 
-      <div class="panel table-panel">
-        <div class="section-title"><span>ALL STARTS</span><h3>ตาราง Survival ทุกจุดเริ่มในกรอบ</h3></div>
-        <p class="muted">ตารางนี้ตอบคำถาม “ถ้า Cycle เริ่มตรง G ไหน จะเป็นอย่างไร” โดยใช้ทุน/โบรกเกอร์/ราคา Survival ชุดเดียวกับด้านบน</p>
-        <div class="table-scroll all-starts"><table><thead><tr><th>เริ่ม</th><th>ราคาเริ่ม</th><th>Initial</th><th>Avg @ ขอบ BUY</th><th>Float @ Survival</th><th>ML @ Survival</th><th>Stop Out ≈</th><th>เติมขั้นต่ำ</th></tr></thead><tbody id="allStartRows"></tbody></table></div>
-      </div>
-    </section>
+<section id="about" class="page">
+<div class="panel box about"><div class="title"><span class="tag">FORMULA</span><h3>โมเดลที่เว็บใช้</h3></div>
+<div class="notice danger"><b>สำคัญ:</b> เว็บนี้เป็น Stress Calculator ไม่ใช่การรับประกัน Stop Out จริง Broker อาจใช้ Margin/Stop Out/Swap/Execution แตกต่างจากแบบจำลอง</div>
+<h4>1) Grid และ Target Inventory</h4><p><code>ราคา G = Origin - (G-1) × Grid Step</code></p><p>Raw Target ที่ G = G แต่ Actual ที่เปิดได้จะถูกจำกัดด้วย <code>Max Positions</code> และ <code>Max Total Lots ÷ Lot จริง</code>. ถ้าเริ่ม Cycle ที่ G40 แต่ Cap เปิดได้แค่ 20 ไม้ เว็บจะจำลอง Initial Actual = 20 ไม่ใช่ 40.</p>
+<h4>2) Normalize Lot ตาม Broker</h4><p>Lot ที่ขอจะถูกยกขึ้นอย่างน้อยถึง Minimum Volume และปัดลงตาม Volume Step เพื่อเลียนแบบพฤติกรรม EA ปัจจุบัน.</p>
+<h4>3) P/L</h4><p><code>Open P/L = Σ[(ราคาปัจจุบัน - ราคาเข้า) × Contract × Lot]</code></p><p>ดังนั้น Axi USOIL: Contract 10 × Lot 0.1 = Exposure 1; ราคาเคลื่อน $1 ≈ $1 ต่อหนึ่งไม้.</p>
+<h4>4) USD / USC</h4><p>เว็บคำนวณความเสี่ยงภายในเป็นเงินจริง USD. ถ้า Account เป็น USC: <code>เงินจริง USD = ค่า USC ÷ 100</code>. เป้า Basket $50 เทียบเท่า EA Input 5,000 USC ใน EA รุ่นที่ยังใช้ raw account currency.</p>
+<h4>5) Margin</h4><p>ถ้าใส่ Margin multiplier มากกว่า 0 เว็บใช้ <code>Margin ≈ Price × Contract × Lots × multiplier</code>. สำหรับ Axi USOIL preset ใช้ 0.01 ตาม Specification. ถ้าใส่ 0 จะ fallback เป็น <code>Price × Contract × Lots ÷ Leverage</code>.</p>
+<h4>6) Survival / เงินเติม</h4><p>ที่ราคา Survival เว็บหยุดเพิ่ม BUY หลัง Lower Limit แล้วคำนวณ Equity, Margin Level และยอด Balance ที่ต้องมีเพื่อรักษา Margin Level ที่กำหนด. เงินเติม = ส่วนต่างจาก Balance จริง และสามารถบวก Buffer เพิ่มได้.</p>
+<h4>ข้อจำกัด</h4><ul><li>Down-only stress path ไม่จำลอง Donchian block, SELL ระหว่างทาง, Basket reset หรือ gap-fill แบบ tick ต่อ tick</li><li>Swap/commission ต้องกรอกเผื่อเอง</li><li>Stop Out ของบัญชีจริงอาจมี rule เพิ่มเติม</li><li>ถ้าเปลี่ยน Broker ให้แก้ Contract, Min Lot, Step, Margin multiplier และ Stop Out ให้ตรง Specification</li></ul></div>
+</section>
 
-    <section id="about" class="tabpage">
-      <div class="panel prose">
-        <div class="section-title"><span>INFO</span><h3>สิ่งที่ Calculator คิด และสิ่งที่มันไม่รู้</h3></div>
-        <div class="notice danger"><b>สำคัญ:</b> นี่เป็นเครื่องคำนวณประมาณการ ไม่ใช่การรับประกันว่าพอร์ตจะรอดหรือ Broker จะ Stop Out ที่ราคาที่คำนวณ</div>
-        <h4>โมเดล Target Inventory ของ EA</h4>
-        <p><code>ราคา G = Origin - (G - 1) × Grid Step</code></p>
-        <p>ถ้าเริ่ม Cycle ที่ G40 และ Actual=0 → Initial Batch = 40 ไม้ที่บริเวณราคา G40 จากนั้น G41 เพิ่มอีก 1 ให้รวม 41, G42 เพิ่มอีก 1 ให้รวม 42 จนถึงขอบ BUY ที่ตั้งไว้</p>
-        <h4>สูตรกำไร/ขาดทุน</h4>
-        <p><code>Open P/L = Σ[(ราคาปัจจุบัน - ราคาเข้าแต่ละชุด) × Contract × Lot]</code></p>
-        <p><code>Equity ≈ Balance + Open P/L + Future Swap/Fee</code></p>
-        <p><code>Margin ≈ ราคา × Contract × Lot รวม ÷ Leverage</code></p>
-        <p><code>Margin Level ≈ Equity ÷ Margin × 100</code></p>
-        <h4>ราคา Stop Out</h4>
-        <p>เว็บไล่จำลองราคาลงจากจุดเริ่มจนถึง 0 และหาจุดแรกที่ Equity ≤ 0 หรือ Margin Level ≤ Stop Out % ที่กรอก หากไม่พบก่อนราคา 0 จะแสดงว่า “ไม่พบเหนือ 0” เพราะสูตร Margin ต่ำกว่าศูนย์ไม่ควรเชื่อถือสำหรับ CFD</p>
-        <h4>เงินที่ต้องเติม</h4>
-        <p>ที่ราคา Survival เป้าหมาย เว็บคำนวณ Equity ขั้นต่ำที่ต้องมีเพื่อรักษา Margin Level ตามเปอร์เซ็นต์ที่คุณตั้ง แล้วเทียบกับทุนปัจจุบันเพื่อบอกยอดเติมขั้นต่ำและยอดแนะนำพร้อม Buffer</p>
-        <h4>ข้อจำกัด</h4>
-        <ul>
-          <li>Margin ของ CFD แต่ละ Broker อาจใช้สูตรหรือ Margin Rate ต่างจาก <code>price × contract × lot ÷ leverage</code></li>
-          <li>Swap ในอนาคต, Commission, Spread, Slippage, Liquidity และ Stop Out rule ของ Broker ทำให้ผลจริงต่างจากแบบจำลอง</li>
-          <li>แบบจำลอง Survival สมมติว่า Grid ที่ราคาผ่านถูก Fill ตาม Target Inventory และหลังถึงขอบ BUY จะไม่เปิด BUY ใหม่เพิ่ม</li>
-          <li>สำหรับพอร์ตที่ถืออยู่จริง ให้ใช้แท็บ “พอร์ตจริงแบบหลายไม้” เพื่อหาราคาล้าง Basket จาก Entry/Lot จริง</li>
-        </ul>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div>XTI ORIGINAL HYBRID // PORTFOLIO TOOL</div>
-    <div>v0.2 • Target Inventory model • Runs locally in your browser</div>
-  </footer>
-  <script src="app.js"></script>
-</body>
-</html>
+<div class="foot"><div>XTI PORTFOLIO CALCULATOR v0.3</div><div>SINGLE-FILE • LOCAL STORAGE • NO SERVER</div></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);const n=id=>Number($(id)?.value||0);const fmt=(v,d=2)=>Number.isFinite(v)?Number(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'-';const money=v=>Number.isFinite(v)?`${v<0?'-':''}$${Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`:'-';const pct=v=>Number.isFinite(v)?`${v.toFixed(2)}%`:'-';
+const KEY='xtiCalcV03';
+const PRESETS={axi:{contract:10,min:0.1,step:0.1,lotReq:0.01,maxLots:2,maxPos:200,marginMult:0.01,origin:85,grid:1,lower:45,hard:30,stop:50},generic100:{contract:100,min:0.01,step:0.01,lotReq:0.01,maxLots:5,maxPos:200,marginMult:0,origin:85,grid:0.5,lower:45,hard:30,stop:50},legacy1000:{contract:1000,min:0.01,step:0.01,lotReq:0.01,maxLots:2,maxPos:200,marginMult:0,origin:85,grid:0.5,lower:45,hard:30,stop:50}};
+function tab(id){document.querySelectorAll('.page,.tab').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelector(`.tab[data-page="${id}"]`).classList.add('active')}document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>tab(b.dataset.page));
+function scale(){return $('accountUnit').value==='USC'?100:1}function rawToUSD(v){return v/scale()}function usdToRaw(v){return v*scale()}function rawMoney(v){return $('accountUnit').value==='USC'?`${fmt(v,2)} USC`:`$${fmt(v,2)}`}
+function normalizeLot(req,minv,step){if(!(minv>0))minv=step>0?step:req;if(!(step>0))step=minv;let v=Math.max(minv,req);v=Math.floor((v+1e-12)/step)*step;return Number(v.toFixed(step<0.001?4:step<0.01?3:2))}
+function gridPrice(c,g){return c.origin-(g-1)*c.grid}function maxGrid(c){return Math.floor((c.origin-c.lower)/c.grid+1e-9)+1}
+function cfg(startOverride=null){const lot=normalizeLot(n('lotRequested'),n('lotMin'),n('lotStep'));const c={contract:n('contract'),lot,lotReq:n('lotRequested'),lotMin:n('lotMin'),lotStep:n('lotStep'),maxPos:Math.max(0,Math.floor(n('maxPositions'))),maxLots:n('maxTotalLots'),leverage:n('leverage'),marginMult:n('marginMultiplier'),stopOut:n('stopOutPct'),balanceUSD:rawToUSD(n('balanceRaw')),origin:n('origin'),grid:n('gridStep'),lower:n('lowerLimit'),hard:n('hardFloor'),survival:n('survivalPrice'),minML:n('minMarginPct'),futureCosts:n('futureCostsUSD'),buffer:n('bufferPct')};c.maxGrid=maxGrid(c);c.start=Math.max(1,Math.min(c.maxGrid,Math.round(startOverride??n('startGrid'))||1));c.lotCap=(c.lot>0&&c.maxLots>0)?Math.floor((c.maxLots+1e-9)/c.lot):0;c.effectiveCap=Math.max(0,Math.min(c.maxPos,c.lotCap));return c}
+function validate(c){if(!(c.contract>0&&c.lot>0&&c.grid>0&&c.origin>=c.lower&&c.balanceUSD>=0))return'ตรวจ Contract, Lot, Grid, Origin/Lower และ Balance';if(c.effectiveCap<1)return'Max Total Lots / Max Positions ต่ำจนเปิดไม่ได้แม้แต่ 1 ไม้';if(c.marginMult<=0&&!(c.leverage>0))return'Leverage ต้องมากกว่า 0 เมื่อ Margin multiplier = 0';return''}
+function marginAt(c,price,lots){if(!(price>0&&lots>0))return 0;const notional=price*c.contract*lots;return c.marginMult>0?notional*c.marginMult:notional/c.leverage}
+function rawTarget(c,g){return Math.max(0,Math.min(c.maxPos,g))}function actualTarget(c,g){return Math.min(rawTarget(c,g),c.effectiveCap)}
+function portfolio(c,price){const sp=gridPrice(c,c.start);let deepest=c.start;if(price<=sp){deepest=Math.floor((c.origin-price)/c.grid+1e-9)+1;deepest=Math.max(c.start,Math.min(c.maxGrid,deepest))}const init=actualTarget(c,c.start);let count=init;let value=init*sp*c.lot;let prev=init;for(let g=c.start+1;g<=deepest;g++){const targ=actualTarget(c,g),add=Math.max(0,targ-prev);if(add>0){value+=add*gridPrice(c,g)*c.lot;count+=add;prev=targ}}const lots=count*c.lot,avg=lots>0?value/lots:NaN,float=(price*lots-value)*c.contract,equity=c.balanceUSD+float+c.futureCosts,margin=marginAt(c,price,lots),ml=margin>0?equity/margin*100:Infinity;return{price,deepest,count,lots,avg,float,equity,margin,ml,init}}
+function stopCond(c,p){const s=portfolio(c,p);return s.equity<=0||(s.margin>0&&s.ml<=c.stopOut)}
+function stopPrice(c){const start=gridPrice(c,c.start);if(stopCond(c,start))return start;let prev=start;for(let p=start-0.05;p>=0;p-=0.05){if(stopCond(c,p)){let lo=Math.max(0,p),hi=prev;for(let i=0;i<42;i++){const mid=(lo+hi)/2;if(stopCond(c,mid))lo=mid;else hi=mid}return hi}prev=p}return stopCond(c,0)?0:NaN}
+function funding(c,p){const s=portfolio(c,p),reqEq=s.margin*(c.minML/100),reqBal=reqEq-s.float-c.futureCosts,add=Math.max(0,reqBal-c.balanceUSD),buf=add*(1+Math.max(0,c.buffer)/100);return{...s,reqEq,reqBal,add,buf}}
+function updateDerived(){const c=cfg();$('lotActualView').value=fmt(c.lot,2);$('exposureView').value=fmt(c.contract*c.lot,2);if(c.maxGrid>0)$('startPriceView').value=fmt(gridPrice(c,c.start),2);$('bLot').value=fmt(c.lot,2);$('bContract').value=String(c.contract);$('pContract').value=String(c.contract)}
+function renderPath(c){const body=$('pathRows');body.innerHTML='';let prev=0;for(let g=c.start;g<=c.maxGrid;g++){const p=gridPrice(c,g),s=portfolio(c,p),t=rawTarget(c,g),a=actualTarget(c,g),add=g===c.start?a:Math.max(0,a-prev);prev=a;const tr=document.createElement('tr');if(a<t)tr.className='rowwarn';tr.innerHTML=`<td>G${g}</td><td>${fmt(p,2)}</td><td>${t}</td><td>${add}</td><td>${a}${a<t?' ⚠':''}</td><td>${fmt(s.lots,2)}</td><td>${fmt(s.avg,3)}</td><td>${money(s.float)}</td><td>${money(s.equity)}</td><td>${Number.isFinite(s.ml)?pct(s.ml):'∞'}</td>`;body.appendChild(tr)}}
+function renderAll(c){const body=$('allStartRows');body.innerHTML='';for(let g=1;g<=c.maxGrid;g++){const cc={...c,start:g},low=portfolio(cc,cc.lower),sur=funding(cc,cc.survival),so=stopPrice(cc),tr=document.createElement('tr');if(g===c.start)tr.className='rowhi';const it=rawTarget(cc,g),ia=actualTarget(cc,g),la=actualTarget(cc,cc.maxGrid);tr.innerHTML=`<td>G${g}</td><td>${fmt(gridPrice(cc,g),2)}</td><td>${it}</td><td>${ia}${ia<it?' ⚠':''}</td><td>${la}</td><td>${fmt(low.avg,3)}</td><td>${money(sur.float)}</td><td>${Number.isFinite(sur.ml)?pct(sur.ml):'∞'}</td><td>${Number.isFinite(so)?fmt(so,2):'ไม่พบ >0'}</td><td>${money(sur.add)}</td>`;body.appendChild(tr)}}
+function calcSurvival(){const c=cfg(),err=validate(c);if(err){$('survivalSignal').className='signal bad';$('survivalSignal').textContent=err;return}updateDerived();$('startGrid').value=c.start;const low=portfolio(c,c.lower),sur=funding(c,c.survival),so=stopPrice(c),rawStart=rawTarget(c,c.start),actStart=actualTarget(c,c.start),rawLow=rawTarget(c,c.maxGrid),actLow=actualTarget(c,c.maxGrid),requiredFullLots=c.maxGrid*c.lot,capHit=actLow<rawLow;
+$('balanceUSDView').textContent=`${money(c.balanceUSD)} (${rawMoney(n('balanceRaw'))})`;$('actualLotExposure').textContent=`${fmt(c.lot,2)} lot / ${money(c.contract*c.lot)} ต่อ $1`;$('initialTargetActual').textContent=`${rawStart} / ${actStart}`;$('lowerTargetActual').textContent=`${rawLow} / ${actLow}`;$('maxGridView').textContent=`G${c.maxGrid} @ ${fmt(gridPrice(c,c.maxGrid),2)}`;$('lotCapView').textContent=`${c.lotCap} ไม้ (cap ${fmt(c.maxLots,2)} lot)`;$('avgLowerView').textContent=fmt(low.avg,3);$('floatLowerView').textContent=money(low.float);$('equityLowerView').textContent=money(low.equity);$('mlLowerView').textContent=Number.isFinite(low.ml)?pct(low.ml):'∞';$('stopOutPriceView').textContent=Number.isFinite(so)?fmt(so,2):'ไม่พบเหนือ 0';$('topUpView').textContent=`${money(sur.add)} (${rawMoney(usdToRaw(sur.add))})`;$('requiredBalanceView').textContent=money(Math.max(c.balanceUSD,sur.reqBal));$('topUpBufferView').textContent=money(sur.buf);
+const cap=$('capNotice');if(capHit){cap.style.display='block';cap.innerHTML=`<b>Target Ladder ถูกจำกัด:</b> ที่ Lower Limit EA ต้องการ ${rawLow} ไม้ แต่ Max Total Lots/Max Positions เปิดได้สูงสุด ${actLow} ไม้. ถ้าต้องการ Stress Test แบบ “เต็ม Target” ต้องตั้ง Max Total Lots อย่างน้อย <b>${fmt(requiredFullLots,2)} lot</b> (เมื่อ Lot จริง ${fmt(c.lot,2)}).`}else cap.style.display='none';
+const sig=$('survivalSignal');const survives=sur.add<=1e-8&&sur.equity>0&&(!Number.isFinite(sur.ml)||sur.ml>=c.minML);sig.className='signal '+(survives?'good':'warn');sig.textContent=survives?`ผ่านเป้า Survival ${fmt(c.survival,2)} ตามเงื่อนไขที่กรอก`:`ต้องเพิ่มทุนเพื่อรักษา Margin Level ${pct(c.minML)} ที่ราคา ${fmt(c.survival,2)}`;
+const marginMode=c.marginMult>0?`Margin multiplier ${c.marginMult}`:`Leverage 1:${fmt(c.leverage,0)}`;$('survivalExplain').innerHTML=`เริ่ม G${c.start} ราคา <b>${fmt(gridPrice(c,c.start),2)}</b>: Raw Target ${rawStart}, เปิดได้จริง ${actStart}. ที่ Lower Limit ${fmt(c.lower,2)} Raw Target = ${rawLow}, Actual สูงสุด = ${actLow} (${fmt(low.lots,2)} lot), ราคาเฉลี่ยประมาณ <b>${fmt(low.avg,3)}</b>. Exposure ต่อไม้ = <b>${fmt(c.contract*c.lot,2)}</b> หน่วย จึงขยับราคา $1 ≈ ${money(c.contract*c.lot)} ต่อไม้. ที่ Survival ${fmt(c.survival,2)}: Floating <b>${money(sur.float)}</b>, Equity <b>${money(sur.equity)}</b>, ML <b>${Number.isFinite(sur.ml)?pct(sur.ml):'∞'}</b>. Stop Out แบบจำลอง ≈ <b>${Number.isFinite(so)?fmt(so,2):'ไม่พบเหนือ 0'}</b>. ใช้ ${marginMode}.`;
+renderPath(c);renderAll(c);save()}
+function calcBasket(){const current=n('bCurrent'),avg=n('bAvg'),count=n('bCount'),lot=n('bLot'),contract=n('bContract'),real=n('bRealized'),cost=n('bCosts'),target=n('bTargetUSD'),lots=count*lot,float=(current-avg)*contract*lots,net=real+cost+float,den=contract*lots,close=den>0?avg+(target-real-cost)/den:NaN,rawTarget=usdToRaw(target);$('bLotsView').textContent=fmt(lots,2);$('bFloatView').textContent=money(float);$('bNetView').textContent=money(net);$('bEAInputView').textContent=$('accountUnit').value==='USC'?`${fmt(rawTarget,2)} USC`:`$${fmt(target,2)}`;$('bClosePriceView').textContent=fmt(close,3);const s=$('basketSignal');s.className='signal '+(net>=target?'good':'warn');s.textContent=net>=target?'Cycle Net แตะเป้าแล้ว':'ยังไม่ถึงเป้า';$('basketExplain').innerHTML=`เป้าเงินจริง ${money(target)} ${$('accountUnit').value==='USC'?`เทียบเท่า EA raw input <b>${fmt(rawTarget,2)} USC</b> สำหรับ EA รุ่นที่ยังใช้สกุลบัญชีโดยตรง.`:''} ราคาประมาณ <b>${fmt(close,3)}</b> จะทำให้ Cycle Net ใกล้เป้า หากต้นทุนและจำนวนไม้ไม่เปลี่ยน.`;save()}
+function parsePositions(){return $('positionsText').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(line=>{const a=line.split(/[;,\t ]+/).filter(Boolean).map(Number);return a.length>=2&&Number.isFinite(a[0])&&Number.isFinite(a[1])&&a[1]>0?{entry:a[0],lot:a[1],cost:Number.isFinite(a[2])?a[2]:0}:null}).filter(Boolean)}
+function calcPositions(){const r=parsePositions(),p=n('pCurrent'),contract=n('pContract'),real=n('pRealized'),target=n('pTarget'),lots=r.reduce((s,x)=>s+x.lot,0),wv=r.reduce((s,x)=>s+x.entry*x.lot,0),avg=lots?wv/lots:NaN,cost=r.reduce((s,x)=>s+x.cost,0),float=r.reduce((s,x)=>s+(p-x.entry)*contract*x.lot,0),net=real+cost+float,close=lots>0?avg+(target-real-cost)/(contract*lots):NaN;$('pCountView').textContent=r.length;$('pLotsView').textContent=fmt(lots,2);$('pAvgView').textContent=fmt(avg,3);$('pCostsView').textContent=money(cost);$('pNetView').textContent=money(net);$('pCloseView').textContent=fmt(close,3);$('pExplain').innerHTML=r.length?`อ่าน ${r.length} ไม้, ราคาเฉลี่ยถ่วง Lot ${fmt(avg,3)}. ถ้าต้นทุนคงเดิม ราคาใกล้ <b>${fmt(close,3)}</b> จะทำให้ Cycle Net แตะ ${money(target)} โดยประมาณ.`:'ยังอ่าน Position ไม่ได้';save()}
+function applyPreset(name=$('preset').value){if(name==='custom')return;const p=PRESETS[name];$('contract').value=p.contract;$('lotMin').value=p.min;$('lotStep').value=p.step;$('lotRequested').value=p.lotReq;$('maxTotalLots').value=p.maxLots;$('maxPositions').value=p.maxPos;$('marginMultiplier').value=p.marginMult;$('origin').value=p.origin;$('gridStep').value=p.grid;$('lowerLimit').value=p.lower;$('hardFloor').value=p.hard;$('stopOutPct').value=p.stop;updateDerived();calcSurvival()}
+const saveIds=['preset','accountUnit','contract','lotRequested','lotMin','lotStep','maxPositions','maxTotalLots','leverage','marginMultiplier','stopOutPct','balanceRaw','origin','gridStep','startGrid','lowerLimit','hardFloor','survivalPrice','minMarginPct','futureCostsUSD','bufferPct','bCurrent','bAvg','bCount','bLot','bContract','bRealized','bCosts','bTargetUSD','positionsText','pCurrent','pContract','pRealized','pTarget'];
+function save(){const o={};saveIds.forEach(id=>{if($(id))o[id]=$(id).value});localStorage.setItem(KEY,JSON.stringify(o))}function load(){try{const o=JSON.parse(localStorage.getItem(KEY)||'{}');if(!Object.keys(o).length)return false;saveIds.forEach(id=>{if(o[id]!==undefined&&$(id))$(id).value=o[id]});return true}catch(e){return false}}
+$('applyPreset').onclick=()=>applyPreset();$('calcSurvival').onclick=calcSurvival;$('calcBasket').onclick=calcBasket;$('calcPositions').onclick=calcPositions;$('resetAll').onclick=()=>{localStorage.removeItem(KEY);location.reload()};$('preset').onchange=()=>applyPreset();$('accountUnit').onchange=()=>{calcSurvival();calcBasket()};['contract','lotRequested','lotMin','lotStep','origin','gridStep','startGrid','lowerLimit','maxTotalLots','maxPositions'].forEach(id=>$(id).addEventListener('input',updateDerived));
+window.addEventListener('error',e=>{const s=$('survivalSignal');if(s){s.className='signal bad';s.textContent='JavaScript error: '+e.message}});
+if(!load())applyPreset('axi');else{updateDerived();calcSurvival()}calcBasket();calcPositions();
+</script>
+</body></html>
